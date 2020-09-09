@@ -111,6 +111,26 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	{
 	case WM_CLOSE:
 		PostQuitMessage(42);
+		return 0;
+	// When window loses focus clear the keystate to prevent zombie input
+	case WM_KILLFOCUS:
+		kbd.ClearState();
+		break;
+	/******** KEYBOARD *********/
+	case WM_KEYDOWN:
+	// Handle system key commands
+	case WM_SYSKEYDOWN:
+		if (!(lParam & 0x40000000) || kbd.AutorepeatIsEnabled())
+		{
+			kbd.OnKeyPressed(static_cast<unsigned char>(wParam));
+		}
+		break;
+	case WM_KEYUP:
+	case WM_SYSKEYUP:
+		kbd.OnKeyReleased(static_cast<unsigned char>(wParam));
+		break;
+	case WM_CHAR:
+		kbd.OnChar(static_cast<unsigned char>(wParam));
 		break;
 	default:
 		break;
