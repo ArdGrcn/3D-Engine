@@ -15,7 +15,7 @@ std::optional<Keyboard::Event> Keyboard::ReadKey() noexcept
 	}
 	else
 	{
-		return std::nullopt;
+		return Event();
 	}
 }
 
@@ -39,13 +39,13 @@ std::optional<char> Keyboard::ReadChar() noexcept
 	}
 	else
 	{
-		return std::nullopt;
+		return char();
 	}
 }
 
 bool Keyboard::CharIsEmpty() const noexcept
 {
-	charbuffer.empty();
+	return charbuffer.empty();
 }
 
 void Keyboard::FlushChar() noexcept
@@ -77,5 +77,24 @@ bool Keyboard::AutorepeatIsEnabled() const noexcept
 void Keyboard::OnKeyPressed(unsigned char keycode) noexcept
 {
 	keystates[keycode] = true;
-	keybuffer.push(Event())
+	keybuffer.push(Event(Event::Type::Press, keycode));
+	TrimBuffer(keybuffer);
+}
+
+void Keyboard::OnKeyReleased(unsigned char keycode) noexcept
+{
+	keystates[keycode] = false;
+	keybuffer.push(Event(Event::Type::Release, keycode));
+	TrimBuffer(keybuffer);
+}
+
+void Keyboard::OnChar(char character) noexcept
+{
+	charbuffer.push(character);
+	TrimBuffer(charbuffer);
+}
+
+void Keyboard::ClearState() noexcept
+{
+	keystates.reset();
 }
