@@ -41,7 +41,9 @@ HINSTANCE Window::WindowClass::GetInstance() noexcept
 
 
 // Window
-Window::Window(int width, int height, const char* name)
+Window::Window(int width, int height, const char* name) :
+	width(width),
+	height(height)
 {
 	// calculate window size based on desired window size
 	RECT wr;
@@ -116,7 +118,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	case WM_KILLFOCUS:
 		kbd.ClearState();
 		break;
-	/******** KEYBOARD *********/
+	/************** KEYBOARD **************/
 	case WM_KEYDOWN:
 	// Handle system key commands
 	case WM_SYSKEYDOWN:
@@ -132,6 +134,7 @@ LRESULT Window::HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noe
 	case WM_CHAR:
 		kbd.OnChar(static_cast<unsigned char>(wParam));
 		break;
+	/************** END KEYBOARD **************/
 	default:
 		break;
 	}
